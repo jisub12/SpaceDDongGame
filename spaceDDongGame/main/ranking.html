@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+  </head>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-image: url("../images/backgroundRankingpage.png");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      flex-direction: column;
+    }
+    .rankingContainer {
+      display: flex;
+      width: 40%;
+      max-width: 700px;
+      height: 600px;
+      max-height: 700px;
+      text-align: center;
+      flex-direction: column;
+      background-color: rgba(10, 10, 10, 0.9);
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 1);
+      color: #fff;
+    }
+
+    button {
+      margin: 10px;
+      margin-top: 20px;
+      width: 100px;
+      height: 30px;
+    }
+
+    button:hover {
+      cursor: pointer;
+    }
+
+    a {
+      text-decoration: none;
+      color: #000000;
+    }
+  </style>
+  <body>
+    <div class="rankingContainer">
+      <h1>실시간 랭킹</h1>
+      <p class="MyHighestScore">MyHighestScore: ${recentscore}</p>
+    </div>
+    <div class="rankingBtnContainer">
+      <button id="myScoreSubmit">현재점수등록</button>
+      <a href="../index.html"><button>게임시작</button></a>
+      <a href="./main.html"><button>메인페이지로</button></a>
+    </div>
+  </body>
+  <script src="./ABI.js"></script>
+  <script>
+    const web3 = new Web3(window.ethereum);
+
+    const rankingAddress = "0x450081f8761C2e3b3fe92Bc3CA897587fDD684f6";
+    const rankingContract = new web3.eth.Contract(rankingABI, rankingAddress, {
+      data: "",
+      from: "",
+    });
+    // 계정
+    let playerAccount = [];
+
+    const recentscore =
+      parseInt(localStorage.getItem("recentScore"), 10) >
+      parseInt(localStorage.getItem("highestScore"), 10)
+        ? parseInt(localStorage.getItem("recentScore"), 10)
+        : parseInt(localStorage.getItem("highestScore"));
+    console.log(recentscore);
+
+    window.ethereum
+      .request({ method: "eth_requestAccounts" })
+      .then(async (accounts) => {
+        const account = accounts[0];
+        console.log(account);
+        playerAccount.push(account);
+
+        loadRankings();
+      });
+    // 본인 최고 기록 (로컬스토리지에 기록)
+    document.querySelector(
+      ".MyHighestScore"
+    ).innerHTML = `MyHighestScore: ${recentscore}`;
+
+    // 본인 최고 기록 랭킹에 등록
+    const recordTransaction = async () => {
+      const record = rankingContract.methods
+        .submitScore(recentscore)
+        .send({ from: playerAccount[0] });
+      console.log(record);
+    };
+    document.getElementById("myScoreSubmit").onclick = recordTransaction;
+
+    const loadRankings = async () => {
+      // 스토리지에 등록된 상위 3개 계정 추출
+      const rankings = await rankingContract.methods.getRankingScores().call();
+      console.log(rankings);
+
+      // 랭킹 추가
+      rankings.forEach(async (player, index) => {
+        const rankingContainer = document.querySelector(".rankingContainer");
+        rankingContainer.innerHTML += `
+            <div>
+                <h2>Rank ${index + 1}</h2>
+                <p>${player.playerAddress}</p>
+                <p>Score: ${player.score}</p>
+            </div>
+        `;
+      });
+    };
+  </script>
+</html>
