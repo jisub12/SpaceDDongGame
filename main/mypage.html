@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      background-image: url("../images/backgroundmypage.png");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      color: white;
+      font-family: "Arial", sans-serif;
+    }
+    .nft_container {
+      display: flex;
+      width: 80%;
+      max-width: 700px;
+      height: 600px;
+      max-height: 700px;
+      text-align: center;
+      flex-direction: column;
+      background-color: rgba(10, 10, 10, 0.9);
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 1);
+      color: #fff;
+      overflow: auto;
+    }
+    #ShowMyNFT {
+      display: flex;
+      margin: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #ShowMyNFT div {
+      margin-bottom: 20px;
+    }
+
+    #ShowMyNFT img {
+      width: 100px;
+      height: 100px;
+      max-width: 100px;
+      max-height: 100px;
+      margin: 30px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      margin: 10px;
+      margin-top: 20px;
+      width: 100px;
+      height: 30px;
+    }
+
+    button:hover {
+      cursor: pointer;
+    }
+
+    a {
+      text-decoration: none;
+      color: #000000;
+    }
+  </style>
+  <body>
+    <div class="nft_container">
+      <label>My NFT</label>
+      <div id="ShowMyNFT"></div>
+    </div>
+    <div>
+      <button onclick="myNFT()">내 NFT 조회</button>
+      <a href="./main.html"><button>Main page</button></a>
+      <a href="./nft.html"><button>NFT Shop</button></a>
+    </div>
+  </body>
+  <script src="../abi/ABI.js"></script>
+  <script>
+    const web3 = new Web3(window.ethereum);
+
+    let account;
+
+    let MyNFTList = [];
+
+    let fetchedTokenIds = new Set();
+
+    window.ethereum
+      .request({ method: "eth_requestAccounts" })
+      .then(async (accounts) => {
+        account = accounts[0];
+        console.log(account);
+
+        const balance = await web3.eth.getBalance(account);
+        const tWemix_balance = await web3.utils.fromWei(balance);
+      });
+
+    const gameTokenAddress = "0x5cf57F63D1Ec2a79192D4E5fa6bD1f709298fEEe";
+    const gameTokenContract = new web3.eth.Contract(
+      gameTokenABI,
+      gameTokenAddress,
+      { data: "", from: "" }
+    );
+
+    const rankingAddress = "";
+    const rankingContract = new web3.eth.Contract(rankingABI, rankingAddress, {
+      data: "",
+      from: "",
+    });
+
+    const spaceNFTAddress = "0xa53501e025A6d02e27952e6d573e017bc30602bb";
+    const spaceNFTContract = new web3.eth.Contract(
+      spaceNFTABI,
+      spaceNFTAddress,
+      { data: "", from: "" }
+    );
+
+    const spaceNFTSellAddress = "0x03Ed149c9020fB724b59031eEA018FE13a7e7B61";
+    const spaceNFTSellContract = new web3.eth.Contract(
+      spaceSellNFTABI,
+      spaceNFTSellAddress,
+      { data: "", from: "" }
+    );
+
+    const myNFT = async () => {
+      try {
+        // 내 NFT 토큰 ID들 가져오기
+        const myNFTs = await spaceNFTContract.methods
+          .getTokensOfOwner(account)
+          .call();
+
+        // 각 NFT에 대해
+        for (let tokenId of myNFTs) {
+          if (fetchedTokenIds.has(tokenId)) continue;
+
+          // 토큰 ID로부터 tokenURI 가져오기
+          let tokenURI = await spaceNFTContract.methods
+            .tokenURI(tokenId)
+            .call();
+
+          const ipfsGateway = "https://gateway.pinata.cloud/ipfs/";
+
+          const fullUri = ipfsGateway + tokenURI;
+
+          // tokenURI로부터 메타데이터 가져오기
+          let metadata = await axios.get(fullUri);
+          console.log(metadata);
+
+          let imageUrl = metadata.data.image;
+
+          let newImageUrl = await imageUrl.replace(
+            "https://jade-petite-constrictor-206.mypinata.cloud/ipfs/",
+            "https://gateway.pinata.cloud/ipfs/"
+          );
+
+          let showMyNFT = document.getElementById("ShowMyNFT");
+          showMyNFT.innerHTML += `
+          <div>
+            <img src='${newImageUrl}' />
+            <p>${metadata.data.name}</p>
+            <p>인기순위: ${metadata.data.attributes.ranking}</p>
+            <p>등급: ${metadata.data.attributes.grade}</p>
+            <p>가격: ${metadata.data.attributes.price}</p>
+            <p>설명: ${metadata.data.description}</p>
+            <button>스킨 적용</button>
+           </div>
+        `;
+
+          fetchedTokenIds.add(tokenId);
+        }
+      } catch (error) {
+        console.error("An error occurred while fetching your NFTs:", error);
+      }
+    };
+  </script>
+</html>

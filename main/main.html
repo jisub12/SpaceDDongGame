@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+  </head>
+  <style>
+    header {
+      display: flex;
+    }
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-image: url("../images/backgroundMainpage.png");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    a {
+      text-decoration: none;
+      color: #000000;
+    }
+
+    button {
+      margin: 10px;
+      margin-top: 20px;
+      width: 100px;
+      height: 30px;
+    }
+    button:hover {
+      cursor: pointer;
+    }
+    .loginBox {
+      display: flex;
+      width: 35%;
+      max-width: 500px;
+      height: auto;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background-color: rgba(10, 10, 10, 0.9); /* 투명한 검은색 */
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3); /* 그림자 효과 */
+      color: #fff;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2em;
+      letter-spacing: 2px;
+    }
+
+    #TokenBalance {
+      margin-top: 10px;
+      font-size: 0.9em;
+    }
+  </style>
+  <body>
+    <div class="loginBox">
+      <h1>Login</h1>
+      <div id="Accounts"></div>
+      <div id="TokenBalance"></div>
+      <div class="btnContainer">
+        <a href="./index.html"><button>게임시작</button></a>
+        <a href="../main/ranking.html"><button>실시간랭킹</button></a>
+        <a href="../main/nft.html"><button>NFT Shop</button></a>
+        <a href="../main/mypage.html"><button>My Page</button></a>
+      </div>
+    </div>
+  </body>
+  <script src="../abi/ABI.js"></script>
+
+  <script>
+    const web3 = new Web3(window.ethereum);
+
+    window.ethereum
+      .request({ method: "eth_requestAccounts" }) // 연결
+      .then(async (accounts) => {
+        const account = accounts[0]; // 1번째 계정
+        console.log(account);
+
+        const balance = await web3.eth.getBalance(account); // 잔액
+        const tWemix_balance = web3.utils.fromWei(balance); // 변환
+
+        // HTML에 잔액 표시
+        const accountsElement = document.getElementById("Accounts");
+        accountsElement.innerHTML = `지갑주소<br> ${account} <br>잔액<br> ${tWemix_balance} WEMIX`;
+
+        const tokenAddress = "0x06e7b90e47F66EE627695B525103B4398B8CB7C7";
+
+        const tokenContract = new web3.eth.Contract(gameTokenABI, tokenAddress);
+
+        const tokenBalance = await tokenContract.methods
+          .balanceOf(account)
+          .call();
+        console.log("GT", tokenBalance);
+
+        const tokenBalanceInGT = web3.utils.fromWei(tokenBalance, "ether");
+        console.log(tokenBalanceInGT);
+        const tokenBalanceElement = document.getElementById("TokenBalance");
+        tokenBalanceElement.innerHTML = `토큰 잔액 : ${tokenBalanceInGT} STK`;
+      });
+  </script>
+</html>

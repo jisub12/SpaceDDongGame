@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      background-image: url("../images/backgroundNFTpage.png");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      color: white;
+      font-family: "Arial", sans-serif;
+    }
+    .nft_container {
+      display: flex;
+      width: 80%;
+      max-width: 700px;
+      /* height: 600px; */
+      max-height: 700px;
+      text-align: center;
+      flex-direction: column;
+      background-color: rgba(10, 10, 10, 0.9);
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 1);
+      color: #fff;
+      overflow: auto;
+    }
+    #nftData {
+      display: flex;
+      margin: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #nftData div {
+      margin-bottom: 20px;
+    }
+
+    #nftData img {
+      width: 100px;
+      height: 100px;
+      max-width: 100px;
+      max-height: 100px;
+      margin: 30px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      margin: 10px;
+      margin-top: 20px;
+      width: 100px;
+      height: 30px;
+    }
+
+    button:hover {
+      cursor: pointer;
+    }
+
+    a {
+      text-decoration: none;
+      color: #000000;
+    }
+    .admin_upload {
+      display: flex;
+      /* width: 80%; */
+      max-width: 700px;
+      /* height: 600px; */
+      max-height: 700px;
+      /* text-align: center; */
+      flex-direction: column;
+      background-color: rgba(10, 10, 10, 0.9);
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgb(255, 0, 0);
+      color: #fff;
+      overflow: auto;
+    }
+  </style>
+  <body>
+    <div class="nft_container">
+      <label>판매 목록 확인</label>
+      <div id="nftData"></div>
+    </div>
+    <div class="admin_upload">
+      <div>
+        <label>IPFS에 파일 업로드:</label>
+        <input type="file" id="fileInput" />
+        <button onclick="upload()">파일 업로드</button>
+      </div>
+      <div>
+        <label>Json 업로드:</label>
+        <button onclick="handleJsonUpload()">Json 업로드</button>
+      </div>
+      <div>
+        <label>Minting</label>
+        <input
+          type="number"
+          id="NFTPrice"
+          placeholder="판매 가격을 입력하세요."
+        />
+        <button onclick="handleMintingUpload()">Minting 업로드</button>
+      </div>
+    </div>
+    <div>
+      <button onclick="fetchAllNFTs()">조회</button>
+      <a href="./main.html"><button>Main page</button></a>
+    </div>
+  </body>
+  <script src="../abi/ABI.js"></script>
+  <script>
+    const web3 = new Web3(window.ethereum);
+
+    let NFTList = [];
+    let JsonHash = "";
+    let fetchedTokenIds = new Set(); // 이미 조회한 NFT의 ID를 저장할 Set 객체
+
+    const gameTokenAddress = "0x8724B21d0022e6E7Fee1f66d3B680c779321110d";
+    const gameTokenContract = new web3.eth.Contract(
+      gameTokenABI,
+      gameTokenAddress,
+      {
+        data: "",
+        from: "",
+      }
+    );
+
+    const spaceNFTAddress = "0x83E43b6d96A34C0F570E389f1035142D0c38CDC9";
+    const spaceNFTContract = new web3.eth.Contract(
+      spaceNFTABI,
+      spaceNFTAddress,
+      {
+        data: "",
+        from: "",
+      }
+    );
+    console.log(spaceNFTContract);
+    let account;
+    const spaceNFTSellAddress = "0xbF926a80574499b4b2B70F91f313a479DF37BB84";
+    const spaceNFTSellContract = new web3.eth.Contract(
+      spaceSellNFTABI,
+      spaceNFTSellAddress,
+      {
+        data: "",
+        from: "",
+      }
+    );
+
+    window.ethereum
+      .request({ method: "eth_requestAccounts" })
+      .then(async (accounts) => {
+        account = accounts[0];
+        console.log(account);
+
+        const balance = await web3.eth.getBalance(account);
+        const tWemix_balance = await web3.utils.fromWei(balance);
+      });
+
+    // 이미지 IPFS에 업로드
+    const upload = async () => {
+      const fileInput = document.getElementById("fileInput");
+      const file = fileInput.files[0];
+      const fileData = new FormData();
+      fileData.append("file", file);
+
+      const resp = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        fileData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            pinata_api_key: "5f761fa390bc69b8a5fe",
+            pinata_secret_api_key:
+              "4be9cafa83cdcf01c5f46ed7cd69cdeb34244515c8a50cbd446008ea98f1b658",
+          },
+        }
+      );
+      alert("파일이 IPFS에 정상적으로 업로드 되었습니다.");
+      console.log("이미지 IPFS에 업로드", resp);
+    };
+    // Json 업로드
+    async function handleJsonUpload() {
+      const jsonData = {
+        pinataContent: {
+          name: "우주선",
+          description: "우주선 스킨",
+          image:
+            "https://jade-petite-constrictor-206.mypinata.cloud/ipfs/QmbVP3bgE5bHMdnnX45GYXgtA61AfNjscgNUSfzEN92Xz8",
+          attributes: { ranking: "1", grade: "Diamond", price: "2000" },
+        },
+        pinataMetadata: {
+          name: "Space.json",
+        },
+      };
+      // 피나타에 등록
+      const resp = await axios.post(
+        "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+        jsonData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            pinata_api_key: "5f761fa390bc69b8a5fe",
+            pinata_secret_api_key:
+              "4be9cafa83cdcf01c5f46ed7cd69cdeb34244515c8a50cbd446008ea98f1b658",
+          },
+        }
+      );
+      console.log("Json파일 해시 값", resp.data.IpfsHash);
+      JsonHash = resp.data.IpfsHash;
+      alert(`Minting에 사용할 tokenURI ${resp.data.IpfsHash}`);
+      console.log("민팅에 사용할 JsonHash값", JsonHash);
+      console.log("Json파일 데이타", jsonData);
+    }
+    // 민팅
+    const handleMintingUpload = async () => {
+      try {
+        let price = document.getElementById("NFTPrice").value;
+
+        const decimals = await gameTokenContract.methods.decimals().call();
+        const priceBN = new web3.utils.toBN(price);
+        const tenToThePowerOfDecimals = new web3.utils.toBN(10).pow(
+          new web3.utils.toBN(decimals)
+        );
+        const finalPrice = priceBN.mul(tenToThePowerOfDecimals);
+        price = finalPrice.toString(10);
+        console.log("민팅 가격 wei", price);
+
+        await spaceNFTSellContract.methods
+          ._sellNFTmint(account, JsonHash, price)
+          .send({ from: account });
+        const minting = document.getElementById("uploadedMinting");
+        const totalNFTs = await spaceNFTContract.methods
+          .gettotalSupply()
+          .call();
+        console.log("NFT 전부 가져옴(갯수)", totalNFTs);
+        const tokenURI = await spaceNFTContract.methods
+          .tokenURI(totalNFTs - 1) // 가장 최근의 것
+          .call({ from: account });
+
+        console.log("가장 최근의 tokenURI 가져옴", tokenURI);
+
+        const pinataJsonData = await axios.get(
+          `https://gateway.pinata.cloud/ipfs/${tokenURI}`
+        );
+        console.log(pinataJsonData);
+        NFTList.push(pinataJsonData.data);
+        alert("Minting Success");
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    // CA에 모든 NFT 조회
+    async function fetchAllNFTs() {
+      const totalSupply = await spaceNFTContract.methods
+        .gettotalSupply()
+        .call();
+      console.log("NFT토큰 전부가져옴(총갯수)", totalSupply);
+
+      for (let i = 0; i < totalSupply; i++) {
+        try {
+          if (fetchedTokenIds.has(i)) continue; // 이미 조회된 토큰이면 건너뛰기
+          let tokenURI = await spaceNFTContract.methods.tokenURI(i).call();
+
+          tokenURI = "https://gateway.pinata.cloud/ipfs/" + tokenURI;
+          const tokenInfo = await axios.get(tokenURI);
+          console.log(tokenInfo);
+
+          NFTList.push({
+            tokenId: i,
+            ...tokenInfo.data,
+          });
+
+          fetchedTokenIds.add(i); // 조회한 토큰 ID Set에 추가
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      const nftDataDiv = document.getElementById("nftData");
+      nftDataDiv.innerHTML = "";
+
+      NFTList.forEach(async (nft) => {
+        let newImageUrl = await nft.image.replace(
+          "https://jade-petite-constrictor-206.mypinata.cloud/ipfs/",
+          "https://gateway.pinata.cloud/ipfs/"
+        );
+
+        nftDataDiv.innerHTML += `
+            <div>
+                <h2>${nft.name}</h2>    
+                <img src='${newImageUrl}' alt=${nft.name} />
+                <p>${nft.description}</p>
+                <p>Ranking: ${nft.attributes.ranking}</p>
+                <p>Grade: ${nft.attributes.grade}</p>
+                <p>Price: ${nft.attributes.price}</p>
+            </div>
+            `;
+      });
+      console.log(NFTList); // 모든 NFT의 정보
+      return await NFTList;
+    }
+  </script>
+</html>
+
+
+
