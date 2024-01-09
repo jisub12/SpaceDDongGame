@@ -74,7 +74,6 @@
       text-decoration: none;
       color: #000000;
     }
-    
   </style>
   <body>
     <div class="nft_container">
@@ -82,7 +81,7 @@
       <div id="ShowMyNFT"></div>
     </div>
     <div>
-        <button onclick="myNFT()">내 NFT 조회</button>
+      <button onclick="myNFT()">내 NFT 조회</button>
       <a href="./main.html"><button>Main page</button></a>
       <a href="./nft.html"><button>NFT Shop</button></a>
     </div>
@@ -135,13 +134,12 @@
     );
 
     const myNFT = async () => {
-    
       try {
         // 내 NFT 토큰 ID들 가져오기
         const myNFTs = await spaceNFTContract.methods
           .getTokensOfOwner(account)
           .call();
-          
+
         // 각 NFT에 대해
         for (let tokenId of myNFTs) {
           if (fetchedTokenIds.has(tokenId)) continue;

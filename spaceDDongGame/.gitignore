@@ -1,5 +1,18 @@
+# 개인 키 파일
 spaceGame.pem
-package-lock.json
-package.json
-./solidity
-./deps
+
+# 솔리디티 관련 폴더
+solidity/
+
+# 의존성 폴더
+.deps/
+
+# node_modules 폴더
+node_modules/
+
+# abi
+abi/
+
+.prettierrc.json
+.package-lock.json
+.package.json

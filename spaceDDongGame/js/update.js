@@ -187,7 +187,8 @@ function update() {
 
     // 플레이어와 잔몹이 충돌했는지 확인
     if (checkSpaceshipCollision(enemyList[i])) {
-      if (!invincible && clones.length === 0) { // 분신, hp깍였을 때 무적 상태
+      if (!invincible && clones.length === 0) {
+        // 분신, hp깍였을 때 무적 상태
         playHp--;
         invincible = true; // 충돌 후 무적 상태 돌입
         setTimeout(() => {

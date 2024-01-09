@@ -29,7 +29,7 @@ let backgroundImage,
   backjumpImg,
   cloneImg,
   catfoodImg,
-  sizedownImg
+  sizedownImg;
 
 // 게임의 상태 값
 let gameOver = false;
@@ -39,7 +39,7 @@ let boss3Created = false; // 보스3
 let boss4Created = false;
 
 let highestScore = localStorage.getItem("highestScore") || 0; // 최고 점수
-let recentScore = localStorage.getItem('recentScore') || 0; // 최근 점수
+let recentScore = localStorage.getItem("recentScore") || 0; // 최근 점수
 let score = 0; // 스코어
 let point = 0; // 포인트
 
@@ -122,63 +122,61 @@ const dropGemPercent = Math.random(); // 보석 나올 확률 랜덤
 // 이미지 관련
 function loadImage() {
   backgroundImage = new Image();
-  backgroundImage.src = "images/background.avif";
+  backgroundImage.src = "../images/background.avif";
 
   spaceshipImage = new Image();
-  spaceshipImage.src = "images/spaceship.png";
+  spaceshipImage.src = "../images/spaceship.png";
 
   bulletImage = new Image();
-  bulletImage.src = "images/bullet.png";
+  bulletImage.src = "../images/bullet.png";
 
   enemyImage = new Image();
-  enemyImage.src = "images/enemy.png";
+  enemyImage.src = "../images/enemy.png";
 
   gameOverImage = new Image();
-  gameOverImage.src = "images/gameover.png";
+  gameOverImage.src = "../images/gameover.png";
 
   enemyBoss1Image = new Image();
-  enemyBoss1Image.src = "images/enemyBoss1.png";
+  enemyBoss1Image.src = "../images/enemyBoss1.png";
 
   enemyBoss2Image = new Image();
-  enemyBoss2Image.src = "images/enemyBoss2.png";
+  enemyBoss2Image.src = "../images/enemyBoss2.png";
 
   enemyBoss3Image = new Image();
-  enemyBoss3Image.src = "images/enemyBoss3.png";
+  enemyBoss3Image.src = "../images/enemyBoss3.png";
 
   enemyBoss4Image = new Image();
-  enemyBoss4Image.src = "images/enemyBoss4.png";
+  enemyBoss4Image.src = "../images/enemyBoss4.png";
 
   petImage = new Image();
-  petImage.src = "images/pet.png";
+  petImage.src = "../images/pet.png";
 
   catImage = new Image();
-  catImage.src = "images/cat.png";
+  catImage.src = "../images/cat.png";
 
   turtleImage = new Image();
-  turtleImage.src = "images/turtle.png";
+  turtleImage.src = "../images/turtle.png";
 
   gemImage = new Image();
-  gemImage.src = "images/gem.png";
-
+  gemImage.src = "../images/gem.png";
 
   speedImage = new Image();
-  speedImage.src = 'images/speed.png';
-
+  speedImage.src = "../images/speed.png";
 
   radiusImg = new Image();
-  radiusImg.src = 'images/radius.png';
+  radiusImg.src = "../images/radius.png";
 
   backjumpImg = new Image();
-  backjumpImg.src = 'images/backjump.png';
+  backjumpImg.src = "../images/backjump.png";
 
   cloneImg = new Image();
-  cloneImg.src = 'images/clone.png';
+  cloneImg.src = "../images/clone.png";
 
   catfoodImg = new Image();
-  catfoodImg.src = 'images/catfood.png';
+  catfoodImg.src = "../images/catfood.png";
 
   sizedownImg = new Image();
-  sizedownImg.src = 'images/sizedown.png';
+  sizedownImg.src = "../images/sizedown.png";
 }
 
 // 이미지 캔버스에 그려주기
@@ -279,10 +277,11 @@ function render() {
   if (playHp <= 0 || score < 0 || point < 0) {
     gameOver = true;
     recentScore = score;
-    localStorage.setItem('recentScore', recentScore);
+    localStorage.setItem("recentScore", recentScore);
     console.log(gameOver);
-    alert('게임이 종료되었습니다. 메인페이지로 이동합니다.');
-    window.location.href = 'http://127.0.0.1:5501/spaceDDongGame/main/main.html'; // 배포하고 주소 바꿔야됌
+    alert("게임이 종료되었습니다. 메인페이지로 이동합니다.");
+    window.location.href =
+      "http://127.0.0.1:5500/spaceDDongGame/main/main.html"; // 배포하고 주소 바꿔야됌
 
     // 쌓아놓은 토큰 컨트랙트에 적립시켜야함
   }
