@@ -282,6 +282,8 @@ function render() {
     localStorage.setItem('recentScore', recentScore);
     console.log(gameOver);
     alert('게임이 종료되었습니다. 메인페이지로 이동합니다.');
-    window.location.href = '../main/main.html';
+    window.location.href = 'http://127.0.0.1:5501/spaceDDongGame/main/main.html'; // 배포하고 주소 바꿔야됌
+
+    // 쌓아놓은 토큰 컨트랙트에 적립시켜야함
   }
 }

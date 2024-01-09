@@ -87,7 +87,7 @@
       <a href="./nft.html"><button>NFT Shop</button></a>
     </div>
   </body>
-  <script src="./ABI.js"></script>
+  <script src="../abi/ABI.js"></script>
   <script>
     const web3 = new Web3(window.ethereum);
 
@@ -135,12 +135,13 @@
     );
 
     const myNFT = async () => {
+    
       try {
         // 내 NFT 토큰 ID들 가져오기
         const myNFTs = await spaceNFTContract.methods
           .getTokensOfOwner(account)
           .call();
-
+          
         // 각 NFT에 대해
         for (let tokenId of myNFTs) {
           if (fetchedTokenIds.has(tokenId)) continue;

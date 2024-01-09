@@ -23,7 +23,7 @@ class Boss {
       this.x + this.imageSize / 2,
       this.y + this.imageSize,
       this.speed
-    ); // 보스의 스피드 사용
+    ); 
   }
 
   init() {

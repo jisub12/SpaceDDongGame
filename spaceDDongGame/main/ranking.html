@@ -61,7 +61,7 @@
       <a href="./main.html"><button>메인페이지로</button></a>
     </div>
   </body>
-  <script src="./ABI.js"></script>
+  <script src="../abi/ABI.js"></script>
   <script>
     const web3 = new Web3(window.ethereum);
 
@@ -96,10 +96,11 @@
 
     // 본인 최고 기록 랭킹에 등록
     const recordTransaction = async () => {
-      const record = rankingContract.methods
+      const record = await rankingContract.methods
         .submitScore(recentscore)
         .send({ from: playerAccount[0] });
       console.log(record);
+      alert('Success');
     };
     document.getElementById("myScoreSubmit").onclick = recordTransaction;
 
