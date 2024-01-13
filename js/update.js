@@ -164,20 +164,21 @@ function update() {
       turtleY + turtleSize > enemy.y
     );
   }
-  // 보석을 먹으면 필살기가 실행되는 함수
+  // 보석을 먹으면 토큰이 쌓이고 / 쌓인 토큰은 게임 끝나면 CA에 저장된다.
   for (let i = 0; i < gemList.length; i++) {
     if (checkSpaceshipCollision(gemList[i])) {
       gemList.splice(i, 1);
       i--;
-      const newClone = useCloneSkill(); // 생성된 분신 변수에 저장
-      // 5초 후에 분신 제거
-      setTimeout(() => {
-        const index = clones.indexOf(newClone); // indexOf로 newClone을 찾음
-        if (index > -1) {
-          // 분산이 있으면
-          clones.splice(index, 1); // 분신 1개 제거
-        }
-      }, 10000);
+      gameToken++;
+      // const newClone = useCloneSkill(); // 생성된 분신 변수에 저장
+      // // 5초 후에 분신 제거
+      // setTimeout(() => {
+      //   const index = clones.indexOf(newClone); // indexOf로 newClone을 찾음
+      //   if (index > -1) {
+      //     // 분산이 있으면
+      //     clones.splice(index, 1); // 분신 1개 제거
+      //   }
+      // }, 10000);
     }
   }
 

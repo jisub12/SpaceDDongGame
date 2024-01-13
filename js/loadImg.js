@@ -119,6 +119,9 @@ let enemyList = [];
 let gemList = [];
 const dropGemPercent = Math.random(); // 보석 나올 확률 랜덤
 
+// 토큰
+let gameToken = 
+
 // 이미지 관련
 function loadImage() {
   backgroundImage = new Image();
