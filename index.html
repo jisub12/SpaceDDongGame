@@ -82,19 +82,18 @@
     const web3 = new Web3(window.ethereum);
 
     window.ethereum
-      .request({ method: "eth_requestAccounts" }) // 연결
+      .request({ method: "eth_requestAccounts" }) 
       .then(async (accounts) => {
-        const account = accounts[0]; // 1번째 계정
+        const account = accounts[0]; 
         console.log(account);
 
-        const balance = await web3.eth.getBalance(account); // 잔액
-        const tWemix_balance = web3.utils.fromWei(balance); // 변환
+        const balance = await web3.eth.getBalance(account); 
+        const tWemix_balance = web3.utils.fromWei(balance);
 
-        // HTML에 잔액 표시
         const accountsElement = document.getElementById("Accounts");
         accountsElement.innerHTML = `지갑주소<br> ${account} <br>잔액<br> ${tWemix_balance} WEMIX`;
 
-        const tokenAddress = "0x06e7b90e47F66EE627695B525103B4398B8CB7C7";
+        const tokenAddress = "0xd5797724dcd5a8c57F76f38C772E1Ae9f4c2CA35";
 
         const tokenContract = new web3.eth.Contract(gameTokenABI, tokenAddress);
 
@@ -106,7 +105,7 @@
         const tokenBalanceInGT = web3.utils.fromWei(tokenBalance, "ether");
         console.log(tokenBalanceInGT);
         const tokenBalanceElement = document.getElementById("TokenBalance");
-        tokenBalanceElement.innerHTML = `토큰 잔액 : ${tokenBalanceInGT} STK`;
+        tokenBalanceElement.innerHTML = `토큰 잔액 : ${tokenBalanceInGT} GT`;
       });
   </script>
 </html>

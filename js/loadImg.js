@@ -120,7 +120,7 @@ let gemList = [];
 const dropGemPercent = Math.random(); // 보석 나올 확률 랜덤
 
 // 토큰
-let gameToken = 
+let gameToken = 0;
 
 // 이미지 관련
 function loadImage() {
@@ -237,6 +237,7 @@ function render() {
   // 최고 점수 표시
   ctx.fillStyle = "red";
   ctx.fillText(`Best : ${highestScore}`, 75, 30);
+
   // 스코어 표시
   ctx.fillStyle = "green";
   ctx.fillText(`Score : ${score}`, 280, 30);
@@ -248,6 +249,10 @@ function render() {
   // 플레이어 hp 표시
   ctx.fillStyle = "white";
   ctx.fillText(`Hp : ${playHp}`, 720, 30);
+
+  // 토큰 개수 표시
+  ctx.fillStyle = "blue";
+  ctx.fillText(`Token : ${gameToken}`, 710, 720);
 
   // hp가 감소할때마다 -5씩 사이즈 감소
   // spaceshipSize -= (initialPlayHp - playHp) * 5;
@@ -278,14 +283,23 @@ function render() {
   }
   // 게임 종료 로직
   if (playHp <= 0 || score < 0 || point < 0) {
+    // 먹은 토큰 컨트랙트에 저장
+    const sendToken = async (tokenAmount) => {
+      try {
+        await gameTokenContract.methods
+          .saveToken(tokenAmount)
+          .send({ from: account });
+      } catch (error) {
+        console.log("sendTokenError", error);
+      }
+    };
     gameOver = true;
     recentScore = score;
     localStorage.setItem("recentScore", recentScore);
     console.log(gameOver);
-    alert("게임이 종료되었습니다. 메인페이지로 이동합니다.");
-    window.location.href =
-      "http://blockchaingame.site/"; // 배포하고 주소 바꿔야됌
-
-    // 쌓아놓은 토큰 컨트랙트에 적립시켜야함
+    sendToken(gameToken).then(() => {
+      alert("게임이 종료되었습니다. 메인페이지로 이동합니다.");
+      window.location.href = "http://blockchaingame.site/";
+    });
   }
 }

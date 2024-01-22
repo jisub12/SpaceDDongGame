@@ -36,6 +36,7 @@
       box-shadow: 0 0 20px rgba(255, 255, 255, 1);
       color: #fff;
       overflow: auto;
+      position: relative;
     }
     #ShowMyNFT {
       display: flex;
@@ -74,11 +75,18 @@
       text-decoration: none;
       color: #000000;
     }
+
+    #ShowMyToken {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+    }
   </style>
   <body>
     <div class="nft_container">
       <label>My NFT</label>
       <div id="ShowMyNFT"></div>
+      <div id="ShowMyToken"></div>
     </div>
     <div>
       <button onclick="myNFT()">내 NFT 조회</button>
@@ -104,9 +112,14 @@
 
         const balance = await web3.eth.getBalance(account);
         const tWemix_balance = await web3.utils.fromWei(balance);
+
+        const tokenbalance = await gameTokenContract.methods.balanceOf(account).call();
+        const tokenbalanceWei = await web3.utils.fromWei(tokenbalance, 'ether');
+        const getMyToken = document.getElementById('ShowMyToken');
+        getMyToken.innerHTML = `잔액 ${tokenbalanceWei} GT`;
       });
 
-    const gameTokenAddress = "0x5cf57F63D1Ec2a79192D4E5fa6bD1f709298fEEe";
+    const gameTokenAddress = "0xd5797724dcd5a8c57F76f38C772E1Ae9f4c2CA35";
     const gameTokenContract = new web3.eth.Contract(
       gameTokenABI,
       gameTokenAddress,
@@ -183,5 +196,6 @@
         console.error("An error occurred while fetching your NFTs:", error);
       }
     };
+
   </script>
 </html>

@@ -164,12 +164,13 @@ function update() {
       turtleY + turtleSize > enemy.y
     );
   }
-  // 보석을 먹으면 토큰이 쌓이고 / 쌓인 토큰은 게임 끝나면 CA에 저장된다.
+  // 보석을 먹으면 토큰이 쌓이고 / 쌓인 토큰은 게임이 끝나면 CA에 저장된다.
   for (let i = 0; i < gemList.length; i++) {
     if (checkSpaceshipCollision(gemList[i])) {
       gemList.splice(i, 1);
       i--;
       gameToken++;
+      console.log("Token get??", gameToken);
       // const newClone = useCloneSkill(); // 생성된 분신 변수에 저장
       // // 5초 후에 분신 제거
       // setTimeout(() => {
@@ -210,7 +211,7 @@ function update() {
       const enemyY = enemyList[i].y;
 
       // 보석 생성
-      if (Math.random() < 0.005) {
+      if (Math.random() < 0.5) { ////////테스트중//////
         // 0.5%
         const gem = new Gem(enemyX, enemyY);
         gemList.push(gem);

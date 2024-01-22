@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <style>
       body {
         display: flex;
@@ -46,6 +48,26 @@
 
     <!-- <h1 style="color: white;">심심풀이 DDONG KONG</h1> -->
   </body>
+  <script src="../abi/ABI.js"></script>
+  <script>
+    const web3 = new Web3(window.ethereum);
+    let account;
+    window.ethereum
+      .request({ method: "eth_requestAccounts" })
+      .then(async (accounts) => {
+        account = accounts[0];
+        const balance = await web3.eth.getBalance(account);
+        const tWemix_balance = await web3.utils.fromWei(balance);
+      });
+
+    const gameTokenAddress = "0xd5797724dcd5a8c57F76f38C772E1Ae9f4c2CA35";
+    const gameTokenContract = new web3.eth.Contract(
+      gameTokenABI,
+      gameTokenAddress,
+      { data: "", from: "" }
+    );
+
+  </script>
   <script src="../js/loadImg.js"></script>
   <script src="../js/renderPause.js"></script>
   <script src="../js/enemy.js"></script>
