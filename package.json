@@ -1,8 +1,10 @@
 {
   "name": "spaceddonggame",
   "version": "1.0.0",
+  "homepage" : "https://jisub12.github.io/spaceddonggame/",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.9.3",
@@ -10,6 +12,7 @@
     "express": "^4.18.2",
     "fs": "^0.0.1-security",
     "ganache-cli": "^6.12.2",
+    "gh-pages": "^6.2.0",
     "path": "^0.12.7",
     "solc": "^0.8.19"
   }

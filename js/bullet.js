@@ -36,7 +36,7 @@ class Bullet {
           const enemyY = enemyList[i].y;
 
           // 보석 생성
-          if (Math.random() < 0.001) {
+          if (Math.random() < 0.0000001) {
             // 0.1%
             const gem = new Gem(enemyX, enemyY);
             gemList.push(gem);

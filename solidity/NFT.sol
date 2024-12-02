@@ -184,8 +184,8 @@ contract sellNFT {
     // 판매 확정 함수
     function NFTBuySuccess(uint256 tokenId) public {
         // 구매 정보 확인
-        uint256 price = spaceNFT.getPrice(tokenId); // NFT가격 가져옴
-        address originalOwner = spaceNFT.ownerOf(tokenId); // NFT 원래 소유자 가져옴
+        uint256 price = spaceNFT.getPrice(tokenId);
+        address originalOwner = spaceNFT.ownerOf(tokenId);
 
         // 판매자에게 토큰 전송, NFT가격 가져와서 원래 소유자에게
         require(
