@@ -1,3 +1,7 @@
 spaceGame.pem
 node_modules/
+
 /solidity/
+/abi
+
+.env
